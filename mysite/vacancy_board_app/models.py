@@ -5,7 +5,7 @@ from mysite.settings import MEDIA_COMPANY_IMAGE_DIR, MEDIA_SPECIALITY_IMAGE_DIR
 
 
 class Vacancy(models.Model):
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=100)
     specialty = models.ForeignKey('Specialty', on_delete=models.CASCADE, related_name="vacancies")
     company = models.ForeignKey('Company', on_delete=models.CASCADE, related_name="vacancies")
     skills = models.TextField()
@@ -25,12 +25,12 @@ class Vacancy(models.Model):
 
 
 class Company(models.Model):
-    title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100, unique=True)
     location = models.CharField(max_length=200)
-    logo = models.ImageField(upload_to=MEDIA_COMPANY_IMAGE_DIR)
+    logo = models.URLField(default='https://place-hold.it/100x60')
     description = models.TextField()
     employee_count = models.PositiveIntegerField(default=1)
-    owner = models.OneToOneField(User, on_delete=models.CASCADE, null=False, related_name='company', default=User)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='company')
 
     class Meta:
         verbose_name = 'Компания'
@@ -38,13 +38,13 @@ class Company(models.Model):
         ordering = ['pk']
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.title}"
 
 
 class Specialty(models.Model):
     code = models.CharField(max_length=30)
     title = models.CharField(max_length=50)
-    picture = models.ImageField(upload_to=MEDIA_SPECIALITY_IMAGE_DIR)
+    picture = models.URLField(default='https://place-hold.it/100x60')
 
     class Meta:
         verbose_name = 'Специализация'
